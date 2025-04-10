@@ -17,6 +17,12 @@
     "paths": {
       "*": ["*", "*.ts", "*.js"] // Allow imports without extensions
     },
-    "allowArbitraryExtensions": true
+    "allowArbitraryExtensions": true,
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom",
+      "@testing-library/user-event"
+    ],
   }
 }

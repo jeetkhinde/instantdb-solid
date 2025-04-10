@@ -5,12 +5,15 @@ import type { IDatabase as InstantDB } from "@instantdb/core"; // Adjust as need
 
 export type DBContextType = InstantDB | undefined;
 
-export const InstantDBContext = createContext<DBContextType>(undefined);
+export const InstantDBContext = createContext<DBContextType>( undefined );
+// improve error message
 
 export function useDb(): InstantDB {
-  const context = useContext(InstantDBContext);
-  if (!context) {
-    throw new Error("useDb must be used within an InstantDBContext.Provider");
+  const context = useContext( InstantDBContext );
+  if ( !context ) {
+    throw new Error(
+      "useDb must be used within an InstantDBContext.Provider. Ensure that you have wrapped your component tree with <InstantDBProvider>."
+    );
   }
   return context;
 }

@@ -28,7 +28,6 @@ import {
   onMount,
   createResource, // Import createResource
   type Accessor,
-  batch, // Import batch for potential multi-set scenarios (though not strictly needed here yet)
 } from "solid-js";
 
 // Import the actual SolidJS query hook we just defined
@@ -75,9 +74,14 @@ export default abstract class InstantSolidAbstractDatabase<
     this.storage = this._core.storage;
   }
 
-  // Async instance method - no change needed
-  getLocalId = ( name: string ): Promise<string> => {
-    return this._core.getLocalId( name );
+  // Async instance method with error handling.
+  getLocalId = async ( name: string ): Promise<string | undefined> => {
+    try {
+      return await this._core.getLocalId( name );
+    } catch ( error ) {
+      console.error( `Error fetching local ID for name "${name}":`, error );
+      return undefined; // Return undefined or handle the error as needed
+    }
   };
 
   // SolidJS hook using createResource for async data

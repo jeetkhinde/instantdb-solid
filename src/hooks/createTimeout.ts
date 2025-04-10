@@ -3,7 +3,7 @@ import { onCleanup } from "solid-js";
 
 // Define the interface for the returned object
 interface TimeoutControls {
-  set: (delay: number, fn: () => void) => void;
+  set: ( delay: number, fn: () => void ) => void;
   clear: () => void;
 }
 
@@ -14,28 +14,28 @@ interface TimeoutControls {
  * @returns {TimeoutControls} An object with `set` and `clear` functions.
  */
 export function createTimeout(): TimeoutControls {
-  // Use `number` for browser environments or `NodeJS.Timeout | null` for NodeJS compatibility
-  let timeoutId: number | null = null;
+  // Use `number` for browser environments or `ReturnType<typeof setTimeout> | null` for NodeJS compatibility
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   const clear = () => {
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
+    if ( timeoutId !== null ) {
+      clearTimeout( timeoutId );
       timeoutId = null;
     }
   };
 
-  const set = (delay: number, fn: () => void) => {
+  const set = ( delay: number, fn: () => void ) => {
     clear(); // Clear any existing timeout before setting a new one
-    timeoutId = setTimeout(() => {
+    timeoutId = setTimeout( () => {
       timeoutId = null; // Clear ref after execution
       fn();
-    }, delay);
+    }, delay );
   };
 
   // Automatically clear the timeout when the component/scope unmounts
-  onCleanup(() => {
+  onCleanup( () => {
     clear();
-  });
+  } );
 
   return { set, clear };
 }
