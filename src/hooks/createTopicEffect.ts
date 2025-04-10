@@ -66,17 +66,23 @@ export function createTopicEffect<
       return; // Skip effect run if dependencies aren't ready
     }
 
+    // Subscribe to the topic
     const unsub = room._core._reactor.subscribeTopic(
       room.id,
-      topic,
-      ( event, peer ) => {
-        onEvent( event, peer );
+      topic as string,
+      ( event: any, peer: any ) => {
+        // Call onEvent with the received data
+        if ( typeof onEvent === 'function' ) {
+          onEvent( event, peer );
+        }
       }
     );
 
     // Cleanup function to unsubscribe when effect re-runs or component unmounts
     onCleanup( () => {
-      unsub();
+      if ( typeof unsub === 'function' ) {
+        unsub();
+      }
     } );
   } );
 }

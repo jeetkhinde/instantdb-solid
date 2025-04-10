@@ -9,8 +9,7 @@
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "files": [
@@ -38,6 +37,7 @@
   },
   "devDependencies": {
     "@instantdb/core": "^0.18.3",
+    "jsdom": "^26.0.0",
     "solid-js": "^1.8.17",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3",
