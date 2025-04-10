@@ -1,9 +1,23 @@
 import {defineConfig} from 'tsup';
+import {nodeExternalsPlugin} from 'esbuild-node-externals';
 
 export default defineConfig( {
-  entry: [ 'src/index.ts' ], // Adjust based on your entry file
-  format: [ 'cjs', 'esm' ], // CommonJS and ES Module formats
-  dts: true, // Generate TypeScript declaration files
-  external: [ 'fsevents' ], // Exclude native modules
-  clean: true, // Clean output directory before building
+  entry: [ 'src/index.ts' ],
+  format: [ 'cjs', 'esm' ],
+  dts: true,
+  splitting: false,
+  sourcemap: true,
+  noExternal: [ 'fsevents' ],
+  clean: true,
+  esbuildPlugins: [
+    nodeExternalsPlugin(),
+  ],
+  esbuildOptions( options ) {
+    options.loader = {
+      ...options.loader,
+      '.node': 'empty',
+    };
+    options.resolveExtensions = [ '.js', '.ts' ];
+    options.conditions = [ 'node' ];
+  },
 } );

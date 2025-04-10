@@ -1,9 +1,11 @@
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
+import path from 'path';
 
 export default defineConfig( {
   resolve: {
     extensions: [ '.js', '.ts', '.jsx', '.tsx' ],
   },
+  optimizeDeps: {exclude: [ 'fsevents' ]},
   test: {
     globals: true,
     environment: 'jsdom',
@@ -19,5 +21,21 @@ export default defineConfig( {
     // or both out to improve performance:
     threads: false,
     isolate: false,
-  }
+  },
+  build: {
+    lib: {
+      entry: path.resolve( __dirname, 'src/index.ts' ),
+      name: 'InstantDBSolid',
+      fileName: ( format ) => `instantdb-solid.${format}.js`,
+    },
+    rollupOptions: {
+      external: [ 'solid-js', '@instantdb/core' ],
+      output: {
+        globals: {
+          'solid-js': 'SolidJS',
+          '@instantdb/core': 'InstantDBCore',
+        },
+      },
+    },
+  },
 } );
