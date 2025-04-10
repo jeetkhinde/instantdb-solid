@@ -5,7 +5,7 @@ SolidJS integration for [InstantDB](https://instantdb.com/), providing reactive 
 ## Installation
 
 ```bash
-npm i @jeetkhinde/instantdb-solid @instantdb/core solid-js
+npm i @jeetkhinde/instantdb-solid
 ```
 
 ### Install package dependencies

@@ -1,6 +1,6 @@
 {
   "name": "@jeetkhinde/instantdb-solid",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "instantdb for Solidjs",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
