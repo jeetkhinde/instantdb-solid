@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "jsx": "preserve",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true, // Ensures compatibility with CommonJS modules
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*", "*.ts", "*.js"] // Allow imports without extensions
+    },
+    "allowArbitraryExtensions": true
+  }
+}

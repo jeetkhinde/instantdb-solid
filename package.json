@@ -1,0 +1,46 @@
+{
+  "name": "@instantdb/solid",
+  "version": "0.1.0",
+  "description": "SolidJS wrapper for InstantDB",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "solid",
+    "solidjs",
+    "instantdb",
+    "realtime",
+    "database"
+  ],
+  "author": "Jagjeet Singh",
+  "license": "ISC",
+  "peerDependencies": {
+    "@instantdb/core": "^0.18.3",
+    "solid-js": "^1.8.0"
+  },
+  "devDependencies": {
+    "@instantdb/core": "^0.18.3",
+    "solid-js": "^1.8.17",
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3",
+    "vite": "^6.2.5"
+  }
+}
