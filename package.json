@@ -1,5 +1,5 @@
 {
-  "name": "@jeetkhinde/instantdb-solidjs",
+  "name": "@jeetkhinde/instantdb-solid",
   "version": "1.0.0",
   "description": "instantdb for Solidjs",
   "main": "./dist/index.js",

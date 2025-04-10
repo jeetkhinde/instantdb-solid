@@ -29,6 +29,8 @@ import version from './version';
  */
 export function init<
   Schema extends InstantSchemaDef<any, any, any> = InstantUnknownSchema,
->() {
-  return new InstantSolidWebDatabase<Schema>();
+>( config: InstantConfig<Schema> ) {
+  return new InstantSolidWebDatabase<Schema>( config, {
+    '@jeetkhinde/instantdb-solid': version,
+  } );
 }
