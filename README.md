@@ -169,6 +169,29 @@ function TypingIndicatorExample() {
 }
 ```
 
+### Cursor Management
+
+```jsx
+import { Cursors } from '@instantdb/solid';
+
+function CursorExample() {
+  const db = useInstant();
+  const room = db.room('example', 'room-1');
+
+  return (
+    <Cursors
+      room={room}
+      userCursorColor="blue"
+      renderCursor={({ color }) => (
+        <div style={{ backgroundColor: color, width: '10px', height: '10px' }} />
+      )}
+    >
+      <div style={{ width: '100%', height: '100%' }}>Move your cursor here!</div>
+    </Cursors>
+  );
+}
+```
+
 ## API Reference
 
 For detailed API documentation, visit the [InstantDB documentation](https://instantdb.com/docs).

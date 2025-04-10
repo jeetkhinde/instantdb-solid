@@ -1,6 +1,6 @@
 
 import type {InstantSchemaDef} from "@instantdb/core";
-import InstantSolidAbstractDatabase from "./old/InstantSolidAbstractDatabase";
+import InstantSolidAbstractDatabase from "./InstantSolidAbstractDatabase";
 
 export default class InstantSolidWebDatabase<
   Schema extends InstantSchemaDef<any, any, any>,
