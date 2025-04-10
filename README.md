@@ -22,12 +22,12 @@ const db = init({
 function App() {
   // Use authentication state
   const auth = db.useAuth();
-  
+
   // Query data reactively
   const { state } = db.useQuery({ 
     tasks: { where: { completed: false } } 
   });
-  
+
   return (
     <div>
       {auth().isLoading ? (
@@ -48,7 +48,7 @@ function App() {
 ## Features
 
 - 🔄 **Fully Reactive**: Built specifically for SolidJS's fine-grained reactivity system
-- 🧩 **Composable Primitives**: Use standalone primitives like `createTopicEffect`, `createPresence`, etc.
+- 🧩 **Composable Primitives**: Use standalone primitives like `createTopicEffect`, `createPresence`, `createSyncPresence`, and `createTypingIndicator`
 - 🔌 **Real-time**: Automatic real-time updates when data changes
 - 🌐 **Presence & Topics**: Built-in support for user presence and pub/sub topics
 
@@ -76,7 +76,7 @@ await db.tx.posts.create({
 function ChatRoom(props) {
   const db = useInstant();
   const room = () => db.room('chats', props.roomId);
-  
+
   // Subscribe to emoji reactions
   createTopicEffect(
     room,
@@ -85,13 +85,13 @@ function ChatRoom(props) {
       console.log(`${peer.name} sent emoji: ${emoji}`);
     }
   );
-  
+
   // Get a function to publish to a topic
   const sendEmoji = createPublishTopic(
     room,
     () => 'emoji'
   );
-  
+
   return (
     <div>
       <button onClick={() => sendEmoji('👍')}>👍</button>
@@ -107,10 +107,10 @@ function ChatRoom(props) {
 function UserPresence() {
   const db = useInstant();
   const room = () => db.room('app', 'main');
-  
+
   // Track user presence
   const presence = createPresence(room);
-  
+
   // Sync user status
   createSyncPresence(
     room, 
@@ -119,17 +119,44 @@ function UserPresence() {
       lastSeen: new Date()
     })
   );
-  
+
   // Create typing indicator
   const typing = createTypingIndicator(
     room,
     () => 'typing',
     { timeout: 2000 }
   );
-  
+
   return (
     <div>
       <p>Online users: {Object.keys(presence.peers).length}</p>
+      <input 
+        {...typing.inputProps()}
+        placeholder="Type a message..."
+      />
+      {typing.active().length > 0 && (
+        <p>Someone is typing...</p>
+      )}
+    </div>
+  );
+}
+```
+
+### Typing Indicator
+
+```jsx
+function TypingIndicatorExample() {
+  const db = useInstant();
+  const room = () => db.room('chat', 'room-123');
+
+  const typing = createTypingIndicator(
+    room,
+    () => 'chat-input',
+    { timeout: 3000 }
+  );
+
+  return (
+    <div>
       <input 
         {...typing.inputProps()}
         placeholder="Type a message..."

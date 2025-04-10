@@ -1,7 +1,7 @@
 {
-  "name": "@instantdb/solid",
+  "name": "@jeetkhinde/instantdb-solidjs",
   "version": "0.1.0",
-  "description": "SolidJS wrapper for InstantDB",
+  "description": "instantdb for Solidjs",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -32,16 +32,17 @@
   "author": "Jagjeet Singh",
   "license": "ISC",
   "peerDependencies": {
-    "@instantdb/core": "^0.18.3",
     "solid-js": "^1.8.0"
   },
   "devDependencies": {
-    "@instantdb/core": "^0.18.3",
     "jsdom": "^26.0.0",
     "solid-js": "^1.8.17",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3",
     "vite": "^6.2.5",
     "vitest": "^3.1.1"
+  },
+  "dependencies": {
+    "@instantdb/core": "v0.18.3"
   }
 }

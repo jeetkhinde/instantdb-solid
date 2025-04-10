@@ -1,5 +1,3 @@
-// solidjs/src/index.ts
-
 import {
   id,
   tx,
@@ -18,7 +16,7 @@ import {
   type User,
   type AuthState,
   type Query,
-  type Config, // Note: InstantConfig is used in InstantSolidAbstractDatabase constructor
+  type Config,
   type InstaQLParams,
   type ConnectionStatus,
 
@@ -55,26 +53,27 @@ import {
   type FileOpts,
   type UploadFileResponse,
   type DeleteFileResponse,
-} from "@instantdb/core";
+} from '@instantdb/core';
 
-// Import SolidJS specific implementations
-import InstantSolidAbstractDatabase from "./InstantSolidAbstractDatabase"; //
-import InstantSolidWebDatabase from "./InstantSolidWebDatabase";
-import { init } from "./init";
+import InstantSolidAbstractDatabase from './InstantSolidAbstractDatabase';
+import InstantSolidWebDatabase from './InstantSolidWebDatabase';
+import {init} from './init';
+import {Cursors} from './Cursors';
 
 export {
   id,
   tx,
   lookup,
   init,
-  InstantSolidWebDatabase, // Export the SolidJS specific web database class
+  InstantSolidWebDatabase,
+  Cursors,
   i,
 
   // internal
-  InstantSolidAbstractDatabase, // Export the SolidJS specific database class
+  InstantSolidAbstractDatabase,
 
-  // Re-export all types from core
-  type Config, // Note: InstantConfig is used in InstantSolidAbstractDatabase constructor
+  // types
+  type Config,
   type Query,
   type QueryResponse,
   type InstantObject,

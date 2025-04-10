@@ -11,139 +11,104 @@ import {
 import { Dynamic } from "solid-js/web";
 
 import type { RoomSchemaShape } from "@instantdb/core";
-
-import { createPresence, type PresenceHandle } from "./hooks/index.js";
-
-// --- Type Definitions ---
-
-// Adjust InstantReactRoom to a hypothetical InstantSolidRoom or core type
-type InstantRoomForSolid<
-  Schema extends RoomSchemaShape,
-  Type extends keyof Schema,
-> = {
-  id: string;
-  type: Type;
-  // Assuming createPresence is a method or we pass `room` to a top-level function
-  // presence: (options: { keys: string[] }) => PresenceHandle<Schema[Type]['presence']>;
-  // Assuming direct access or a helper for full presence
-  _core: {
-    _reactor: {
-      getPresence: (
-        type: Type,
-        id: string
-      ) => { peers: Record<string, Schema[Type]["presence"]> }; // Simplified type
-    };
-  };
-};
-
-interface CursorsProps<
-  RoomSchema extends RoomSchemaShape,
-  RoomType extends keyof RoomSchema,
-> {
-  spaceId?: string;
-  room: InstantRoomForSolid<RoomSchema, RoomType>;
-  style?: JSX.CSSProperties;
-  userCursorColor?: string;
-  as?: keyof JSX.IntrinsicElements | Component<any>; // Allow intrinsic elements or components
-  className?: string;
-  children?: JSX.Element;
-  renderCursor?: (props: {
-    color: string;
-    presence: RoomSchema[RoomType]["presence"];
-  }) => JSX.Element;
-  propagate?: boolean;
-  zIndex?: number;
-}
-
+import { InstantSolidRoom } from "./InstantSolidRoom";
+  
+ 
 // --- Component Implementation ---
 
 export function Cursors<
   RoomSchema extends RoomSchemaShape,
   RoomType extends keyof RoomSchema,
->(props: CursorsProps<RoomSchema, RoomType>): JSX.Element {
-  const asElement = () => props.as || "div";
-  const zIndex = () => (props.zIndex !== undefined ? props.zIndex : defaultZ);
+>({
+  as = 'div',
+  spaceId: _spaceId,
+  room,
+  className,
+  style,
+  userCursorColor,
+  children,
+  renderCursor,
+  propagate,
+  zIndex,
+}: {
+  spaceId?: string;
+  room: InstantSolidRoom;
+  style?: JSX.CSSProperties;
+  userCursorColor?: string;
+  as?: any;
+  className?: string;
+  children?: JSX.Element;
+  renderCursor?: (props: {
+    color: string;
+    presence: RoomSchema[RoomType]['presence'];
+  }) => JSX.Element;
+  propagate?: boolean;
+  zIndex?: number;
+}) {
+   
+  const spaceId = _spaceId ||
+      `cursors-space-default--${String(room.type)}-${room.id}`;
 
-  // Derive spaceId - createMemo ensures it recalculates if props.spaceId or props.room changes
-  const spaceId = createMemo(
-    () =>
-      props.spaceId ||
-      `cursors-space-default--${String(props.room.type)}-${props.room.id}`
-  );
+  const cursorsPresence = room.createPresence({ keys: [spaceId] });
+  const fullPresence = room._core._reactor.getPresence(room.type, room.id);
 
-  const cursorsPresence = createPresence(props.room, () => ({
-    keys: [spaceId()], // Pass the derived spaceId reactively
-  }));
-  // -------------------------------------------------------
-
-  const fullPresence = createMemo(() =>
-    props.room._core._reactor.getPresence(props.room.type, props.room.id)
-  );
-
-  function publishCursorPosition(
+  function publishCursor(
     rect: DOMRect,
-    clientCoords: { clientX: number; clientY: number }
+    touch: { clientX: number; clientY: number },
   ) {
-    const x = clientCoords.clientX;
-    const y = clientCoords.clientY;
+    const x = touch.clientX;
+    const y = touch.clientY;
     const xPercent = ((x - rect.left) / rect.width) * 100;
     const yPercent = ((y - rect.top) / rect.height) * 100;
-
-    // Call the publish function from the hypothetical createPresence hook
     cursorsPresence.publishPresence({
-      [spaceId()]: {
-        // Use the reactive spaceId value
+      [spaceId]: {
         x,
         y,
         xPercent,
         yPercent,
-        color: props.userCursorColor,
+        color: userCursorColor,
       },
-    } as RoomSchema[RoomType]["presence"]);
+    } as RoomSchema[RoomType]['presence']);
   }
 
-  function clearCursorPosition() {
-    // Call the publish function from the hypothetical createPresence hook
-    cursorsPresence.publishPresence({
-      [spaceId()]: undefined, // Use the reactive spaceId value
-    } as RoomSchema[RoomType]["presence"]);
-  }
-
-  const onMouseMove = (e: MouseEvent) => {
-    if (!props.propagate) {
+ const onMouseMove = (e: MouseEvent) => {
+    if (!propagate) {
       e.stopPropagation();
     }
     // Ensure currentTarget is an Element before getting bounding rect
     if (e.currentTarget instanceof Element) {
       const rect = e.currentTarget.getBoundingClientRect();
-      publishCursorPosition(rect, e);
+      publishCursor(rect, e);
     }
   };
 
+  function clearCursor() {
+    cursorsPresence.publishPresence({
+      [spaceId]: undefined,
+    } as RoomSchema[RoomType]['presence']);
+  }
+
   const onMouseOut = (e: MouseEvent) => {
-    // Clear presence when mouse leaves the tracked area
-    clearCursorPosition();
+    clearCursor();
   };
 
   const onTouchMove = (e: TouchEvent) => {
     if (e.touches.length !== 1) {
-      return; // Handle only single touch for cursor
+      return;
     }
 
     const touch = e.touches[0];
-
     if (touch.target instanceof Element) {
-      if (!props.propagate) {
+      if (!propagate) {
         e.stopPropagation();
       }
-      const rect = touch.target.getBoundingClientRect(); // Get rect of the element touched
-      publishCursorPosition(rect, touch);
+      const rect = touch.target.getBoundingClientRect();
+      publishCursor(rect, touch);
     }
   };
 
   const onTouchEnd = (e: TouchEvent) => {
-    // Clear presence when touch ends
-    clearCursorPosition();
+    clearCursor();
   };
 
   // Use createMemo to get peers reactively from the presence state
@@ -153,73 +118,54 @@ export function Cursors<
 
   return (
     <Dynamic
-      component={asElement()}
+      component={as}
       onMouseMove={onMouseMove}
       onMouseOut={onMouseOut}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      className={props.className}
+      className={className}
       style={{
         position: "relative",
-        ...(props.style || {}), // Merge styles
+        ...(style || {}),
       }}
     >
-      {/* Render children */}
-      {props.children}
-
-      {/* Cursors Container */}
+      {children}
       <div
+      key={spaceId}
         style={{
           ...absStyles,
           ...inertStyles,
-          "z-index": zIndex(), // Use function access for reactivity
+          "z-index": zIndex !== undefined ? zIndex : defaultZ,
         }}
       >
-        <For each={peerEntries()}>
-          {([id, presence]) => {
-            // Access the specific cursor data for this spaceId reactively
-            const cursor = createMemo(
-              () =>
-                (presence as Record<string, RoomSchema[RoomType]["presence"]>)[
-                  spaceId()
-                ]
-            );
 
-            return (
-              <Show when={cursor()}>
-                {(
-                  cursorData // cursorData is the non-null cursor object
-                ) => (
-                  <div
-                    style={{
-                      ...absStyles,
-                      transform: `translate(${cursorData().xPercent}%, ${cursorData().yPercent}%)`,
-                      "transform-origin": "0 0",
-                      transition: "transform 100ms", // Consider making duration configurable
-                    }}
-                  >
-                    <Show
-                      when={props.renderCursor}
-                      fallback={<Cursor color={cursorData().color} />}
-                    >
-                      {(renderFn) => {
-                        // Get the full presence for the current peer reactively
-                        const peerFullPresence = createMemo(
-                          () => fullPresence().peers[id]
-                        );
-                        return renderFn()({
-                          // Call the render prop function
-                          color: cursorData().color,
-                          presence: peerFullPresence(),
-                        });
-                      }}
-                    </Show>
-                  </div>
-                )}
-              </Show>
-            );
-          }}
-        </For>
+        {Object.entries(cursorsPresence.peers).map(([id, presence]) => {
+          const cursor = presence[spaceId];
+          if (!cursor) return null;
+          return (
+            <div
+              key={id}
+              style={{
+                ...absStyles,
+                transform: `translate(${cursor?.xPercent ?? 0}%, ${cursor?.yPercent ?? 0}%)`,
+                "transform-origin": "0 0",
+                transition: "transform 100ms",
+              }}
+            >
+              <Show
+                when={renderCursor}
+                fallback={<Cursor color={cursor?.color} />}
+                children={(renderFn: any) => {
+                  const peerFullPresence = fullPresence.peers[id];
+                  return renderFn({
+                    color: cursor?.color ?? "",
+                    presence: peerFullPresence ?? {},
+                  });
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
     </Dynamic>
   );
